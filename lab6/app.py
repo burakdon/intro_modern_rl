@@ -4,6 +4,7 @@ import pandas as pd
 import json
 from datetime import datetime
 import os
+import random
 
 # Page configuration
 st.set_page_config(
@@ -23,6 +24,10 @@ if 'seed_a' not in st.session_state:
     st.session_state.seed_a = 1
 if 'seed_b' not in st.session_state:
     st.session_state.seed_b = 2
+if 'prompts_dataset' not in st.session_state:
+    st.session_state.prompts_dataset = None
+if 'selected_prompt' not in st.session_state:
+    st.session_state.selected_prompt = ""
 
 # Title
 st.title("🤖 Human Preference Data Collection")
@@ -108,12 +113,67 @@ with st.sidebar.expander("⚙️ Generation Settings", expanded=True):
     
     st.caption("Keep seeds fixed for reproducibility; vary temperature for diversity.")
 
-# Prompt input
-prompt = st.text_area(
-    "Enter your prompt:",
-    height=100,
-    placeholder="Type your prompt here..."
-)
+# Load prompts dataset
+@st.cache_data
+def load_prompts_dataset():
+    """Load prompts from the dataset file."""
+    try:
+        with open("prompts_dataset.json", "r") as f:
+            data = json.load(f)
+            return data.get("prompts", [])
+    except FileNotFoundError:
+        return []
+    except Exception as e:
+        st.error(f"Error loading prompts dataset: {str(e)}")
+        return []
+
+# Load prompts
+if st.session_state.prompts_dataset is None:
+    st.session_state.prompts_dataset = load_prompts_dataset()
+
+# Prompt input section
+st.subheader("Prompt")
+prompt_col1, prompt_col2 = st.columns([4, 1])
+
+with prompt_col2:
+    st.write("")  # Spacing
+    st.write("")  # Spacing
+    random_button = st.button("🎲 Random Prompt", use_container_width=True, help="Select a random prompt from the dataset")
+    
+    # Show dataset info
+    if st.session_state.prompts_dataset:
+        st.caption(f"📚 {len(st.session_state.prompts_dataset)} prompts available")
+
+# Handle random prompt selection
+if random_button:
+    if st.session_state.prompts_dataset and len(st.session_state.prompts_dataset) > 0:
+        random_prompt = random.choice(st.session_state.prompts_dataset)
+        st.session_state.selected_prompt = random_prompt
+        # Update the widget state directly
+        if "prompt_input" not in st.session_state:
+            st.session_state.prompt_input = ""
+        st.session_state.prompt_input = random_prompt
+        st.rerun()
+    else:
+        st.warning("No prompts available in dataset. Make sure prompts_dataset.json exists.")
+
+with prompt_col1:
+    # Initialize prompt_input if not exists
+    if "prompt_input" not in st.session_state:
+        st.session_state.prompt_input = ""
+    
+    # If selected_prompt is set, use it; otherwise use current input
+    if st.session_state.selected_prompt and st.session_state.selected_prompt != st.session_state.prompt_input:
+        st.session_state.prompt_input = st.session_state.selected_prompt
+        st.session_state.selected_prompt = ""  # Clear after using
+    
+    prompt = st.text_area(
+        "Enter your prompt:",
+        height=100,
+        placeholder="Type your prompt here...",
+        value=st.session_state.prompt_input,
+        key="prompt_input"
+    )
 
 # Generate responses button
 col1, col2, col3 = st.columns([1, 1, 2])
@@ -235,6 +295,7 @@ if generate_button and prompt:
         if response1 and response2:
             # Store in session state (keeps responses fixed)
             st.session_state.current_prompt = prompt
+            st.session_state.selected_prompt = ""  # Clear selected prompt after generation
             st.session_state.current_responses = {
                 "response1": response1,
                 "response2": response2,

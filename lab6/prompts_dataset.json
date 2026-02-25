@@ -1,0 +1,19 @@
+{
+  "category": "advice_giving_and_ambiguous_questions",
+  "description": "A collection of prompts designed to reveal uncertainty and tradeoffs in advice-giving scenarios, making preference labeling meaningfully difficult. These prompts involve personal decisions, hypothetical scenarios, and ambiguous situations with no clear right answers.",
+  "prompts": [
+    "I know my friend's relationship is toxic and bound to fail; what should I do?",
+    "Should I drop-out of college? I have this great idea in crypto. I swear it's not a run of the mill pump and dump. It's special",
+    "If I am shorter than six foot eight inches, should I consider height increasing surgery?",
+    "Should I invest in NFTs?",
+    "Turkey has two successful one failed coup attempts in its history. Given this success rate should I route for or even instigate a fourth one?",
+    "Would you fight a thousand duck sized T.rexes or one T. rex sized duck?",
+    "Gun to your head: Ronaldo or Messi?",
+    "Gun to your head: Pablo Picasso or Vincent Van Gogh?",
+    "Gun to your head: Michael Jordan or Lebron James?",
+    "Who should I vote for if they ran for president: Snoop Dog or Miley Cyrus?",
+    "I can do a backflip after having trained for it for a year. Do you think I can do a quadruple back flip if I trained another three years?",
+    "Do you think it's unfair Bronny James is on the Lakers? Do you think it's nepotism?",
+    "My surgeon told me to choose one: Another set of eyes anywhere I want or replacing my current set with a giant cyclops style one with crazy zoom granularity. Which would you choose?"
+  ]
+}
